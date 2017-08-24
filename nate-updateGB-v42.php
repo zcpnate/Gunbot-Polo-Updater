@@ -98,7 +98,9 @@ function array_value_exists_wildcard ( $array, $search, $return = '' ) {
 ///////////////////Poloniex Calculations///////////////
 $pApi = new Poloniex($pKey,$pSec);
 
+if($pKey){
 $pBalances = $pApi->returnBalances();
+}
 
 $pBalances = array_filter($pBalances, function($value) {return $value !== '0.00000000';});
 
@@ -213,7 +215,9 @@ $bSearch = "BTC-*";
 
 $bTicker = json_decode(json_encode($bTicker), True);
 
+if($bKey){
 $bBalances = $bApi->getBalances();
+}
 
 $bBalances = json_decode(json_encode($bBalances), True);
 
