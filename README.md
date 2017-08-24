@@ -18,12 +18,8 @@ Instructions:
 5) Set configuration based on comments.
 
 6) Schedule to run using cron or task scheduler. Recommended 90 minute intervals.
+<br/>
 
-
-
-
-If you like my work, I don't drink sooo buy me a Starbucks?
-
-BTC: 1EbMRKN6eF8DJMA114E8Hx6JWyzX8YvN65
-
+If you like my work, I don't drink sooo buy me a Starbucks?<br/>
+BTC: 1EbMRKN6eF8DJMA114E8Hx6JWyzX8YvN65 <br/>
 ETH: 0xB0cF532D96Ca3cf53484FA5c788A1627568Bb942
