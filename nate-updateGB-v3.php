@@ -1,5 +1,4 @@
 <?php
-
 //////////// Make sure to enable PHP Curl extension in your php.ini file
 
 ////// NEW Poloniex API Key + Secret
@@ -7,24 +6,39 @@ $pkey = "";
 $psec = "";
 //////
 
-
 ////config path uncomment and adjust for your OS/Location
-//$cpath = '/var/www/config/config.js';  //// Linux
+$cpath = '/var/www/config/config.js';  //// Linux
 
-$cpath = 'C:\Users\User\Desktop\Gunbot\config.js'; //// Windows
+//$cpath = 'C:\Users\User\Desktop\Gunbot\config.js'; //// Windows
 
 
-/////////
-$volumeMin = '1000'; ///// Min Volume in BTC over 24hr to consider
-$strategy = 'bbstepgain'; //// Strategy for normal trading
+///High Level Coins
+$highVolumeMin = '1000'; ///// Min Volume in BTC over 24hr to consider HIGH coin
+$highStrategy = 'bbstepgain'; //// High Coin Strategy
+$highBuyAmount = '.08'; //// High Coin Buy Amount
+////For SG Sell Only
+$highSELLLVL1 = '2'; ////High Coin SG lvl1
+$highSELLLVL2 = '2.5'; ////High Coin SG lvl2
+$highSELLLVL3 = '70'; ////High Coin SG lvl3
+
+
+///Medium Level Coins
+$medVolumeMin = '600'; ///// Min Volume in BTC over 24hr to consider MEDIUM coin
+$medStrategy = 'bbstepgain'; //// Med Coin Strategy
+$medBuyAmount = '.05'; //// Med Coin Buy Amount
+//// For SG Sell Only
+$medSELLLVL1 = '1'; ////Med Coin SG lvl1
+$medSELLLVL2 = '1.5'; ////Med Coin SG lvl2
+$medSELLLVL3 = '70'; ////Med Coin SG lvl2
+
 
 ///Put your Override settings here for Help Coins -- Coins you own but no longer meet the min volume.
-$overrideStrategy = 'bbstepgain'; //// Strategy for Help Coins
-$override = array( 'SELLLVL1'=> 0.6,'SELLLVL'=>1, 'BUY_ENABLED'=>false ); //// Override settings for Help Coins
+$overrideStrategy = 'bbstepgain'; ////Help Coin Strategy
+$override = array( 'SELLLVL1'=> 0.6,'SELLLVL'=>1, 'BUY_ENABLED'=>false ); ////Help Coin Override Settings
 
 ///////////////////////////////////////////////////////
-////////////////DO NOT EDIT BELOW HERE/////////////////
 ///////////////////////////////////////////////////////
+
 class poloniex {
                 protected $api_key;
                 protected $api_secret;
@@ -154,11 +168,26 @@ $search = "BTC_*";
 
 $BTCpairs = array_key_exists_wildcard( $ticker, $search, 'key-value' ) ;
 
-$highVolume = array_filter($BTCpairs, function ($var) use ($volumeMin) {
-    return ($var['baseVolume'] > $volumeMin);
+$tradable = array_filter($BTCpairs, function ($var) use ($medVolumeMin) {
+    return ($var['baseVolume'] > $medVolumeMin);
 });
 
-$coins = array_keys($highVolume);
+//print_r($tradable);
+
+$highCoins = array_filter($tradable, function ($var) use ($highVolumeMin) {
+    return ($var['baseVolume'] > $highVolumeMin);
+});
+
+//print_r($highCoins);
+
+$medCoins = array_filter($tradable, function ($var) use ($highVolumeMin) {
+    return ($var['baseVolume'] < $highVolumeMin);
+});
+
+//print_r($medCoins);
+
+
+$tradableNames = array_keys($tradable);
 
 $ownedPairs = $balanceCoins;
 
@@ -167,15 +196,22 @@ foreach ($ownedPairs as &$value) {
 }
 unset($value);
 
-$helpcoins = array_diff($ownedPairs, $coins);
+$helpcoins = array_diff($ownedPairs, $tradableNames);
 
 //print_r($helpcoins);
 //print_r($coins);
 //print_r($ownedPairs);
 
 
-$coins = array_flip($coins);
+
+
+$highCoins = array_keys($highCoins);
+$medCoins = array_keys($medCoins);
+
+$highCoins = array_flip($highCoins);
+$medCoins = array_flip($medCoins);
 $helpcoins = array_flip($helpcoins);
+//$ownedPairs = array_flip($ownedPairs);
 
 $jsonString = file_get_contents($cpath);
 
@@ -184,16 +220,34 @@ $data = json_decode($jsonString, true);
 
 $data['pairs']['poloniex'] = array();
 
-
-foreach($coins as &$value){
-$value = array('strategy' => $strategy, 'override' => array());
+if(fnmatch("*stepgain*",$highStrategy)){
+	$highOverride = array('BTC_TRADING_LIMIT'=>$highBuyAmount,'SELLLVL1'=>$highSELLLVL1,'SELLLVL2'=>$highSELLLVL2,'SELLLVL3'=>$highSELLLVL3); 
+}else{
+	$highOverride = array('BTC_TRADING_LIMIT'=>$highBuyAmount);
 }
+
+if(fnmatch("*stepgain*",$medStrategy)){
+        $medOverride = array('BTC_TRADING_LIMIT'=>$medBuyAmount,'SELLLVL1'=>$medSELLLVL1,'SELLLVL2'=>$medSELLLVL2,'SELLLVL3'=>$medSELLLVL3);
+}else{
+        $medOverride = array('BTC_TRADING_LIMIT'=>$medBuyAmount);
+}
+
+
+foreach($highCoins as &$value){
+$value = array('strategy' => $highStrategy, 'override' => $highOverride);
+}
+
+foreach($medCoins as &$value){
+$value = array('strategy' => $medStrategy, 'override' => $medOverride);
+}
+
 
 foreach($helpcoins as &$value){
 $value = array('strategy' => $overrideStrategy, 'override' => $override);
 }
 
-$newPairs = array_merge($coins,$helpcoins);
+$newPairs = array_merge($highCoins,$medCoins,$helpcoins);
+
 
 
 $data['pairs']['poloniex'] = $newPairs;
