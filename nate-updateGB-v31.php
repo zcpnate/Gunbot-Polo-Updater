@@ -21,7 +21,6 @@ $highSELLLVL1 = '2'; ////High Coin SG lvl1
 $highSELLLVL2 = '2.5'; ////High Coin SG lvl2
 $highSELLLVL3 = '70'; ////High Coin SG lvl3
 
-
 ///Medium Level Coins
 $medVolumeMin = '600'; ///// Min Volume in BTC over 24hr to consider MEDIUM coin
 $medStrategy = 'bbstepgain'; //// Med Coin Strategy
@@ -220,16 +219,31 @@ $data = json_decode($jsonString, true);
 
 $data['pairs']['poloniex'] = array();
 
+//$highStrat = $data['strategies'][$highStrategy];
+//$medStrat = $data['strategies'][$medStrategy];
+
+
+$highStrat['BTC_TRADING_LIMIT'] = (float)$highBuyAmount;
+$medStrat['BTC_TRADING_LIMIT'] = (float)$medBuyAmount;
+
 if(fnmatch("*stepgain*",$highStrategy)){
-	$highOverride = array('BTC_TRADING_LIMIT'=>$highBuyAmount,'SELLLVL1'=>$highSELLLVL1,'SELLLVL2'=>$highSELLLVL2,'SELLLVL3'=>$highSELLLVL3); 
+	$highStrat['SELLLVL1'] = (float)$highSELLLVL1;
+	$highStrat['SELLLVL2'] = (float)$highSELLLVL2;
+	$highStrat['SELLLVL3'] = (float)$highSELLLVL3;
+
+	$highOverride = $highStrat; 
 }else{
-	$highOverride = array('BTC_TRADING_LIMIT'=>$highBuyAmount);
+	$highOverride = $highStrat;
 }
 
 if(fnmatch("*stepgain*",$medStrategy)){
-        $medOverride = array('BTC_TRADING_LIMIT'=>$medBuyAmount,'SELLLVL1'=>$medSELLLVL1,'SELLLVL2'=>$medSELLLVL2,'SELLLVL3'=>$medSELLLVL3);
+        $medStrat['SELLLVL1'] = (float)$medSELLLVL1;
+        $medStrat['SELLLVL2'] = (float)$medSELLLVL2;
+        $medStrat['SELLLVL3'] = (float)$medSELLLVL3;
+	
+	$medOverride = $medStrat;
 }else{
-        $medOverride = array('BTC_TRADING_LIMIT'=>$medBuyAmount);
+        $medOverride = $medStrat;
 }
 
 
