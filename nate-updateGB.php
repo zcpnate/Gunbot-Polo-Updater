@@ -2,17 +2,17 @@
 require_once('PoloAPI.php');
 require_once('BittrexAPI.php');
 
-//////////// Make sure to enable PHP Curl extension in your php.ini file
+//////////// Make sure to enable PHP Curl and OpenSSL extension in your php.ini file
 
-////// NEW Poloniex API Key + Secret
+////// NEW Poloniex API Key + Secret////////////
 $pKey = "";
 $pSec = "";
-//////
+////////////////////////////////////////////////
 
-////// NEW Bittrex API Key + Secret
+////// NEW Bittrex API Key + Secret ////////////
 $bKey = "";
 $bSec = "";
-//////
+////////////////////////////////////////////////
 
 
 ////config path uncomment and adjust for your OS/Location
@@ -96,11 +96,10 @@ function array_value_exists_wildcard ( $array, $search, $return = '' ) {
 
 
 ///////////////////Poloniex Calculations///////////////
+if($pKey){
 $pApi = new Poloniex($pKey,$pSec);
 
-if($pKey){
 $pBalances = $pApi->returnBalances();
-}
 
 $pBalances = array_filter($pBalances, function($value) {return $value !== '0.00000000';});
 
@@ -108,6 +107,7 @@ unset($pBalances['USDT']);
 unset($pBalances['BTC']);
 
 $pBalanceCoins = array_keys($pBalances);
+
 
 $pTicker = $pApi->returnTicker();
 
@@ -204,9 +204,11 @@ $value = array('strategy' => $overrideStrategy, 'override' => $override);
 
 $pNewPairs = array_merge($pHighCoins,$pMedCoins,$pHelpCoins);
 
+}
 ////////////////End Poloniex Calculations/////////////////////////////////
 
 ////////////////////Bittrex Calculations//////////////////////////////////
+if($bKey){
 $bApi = new Client ($bKey, $bSec);
 
 $bTicker = $bApi->getMarketSummaries();
@@ -340,17 +342,12 @@ $value = array('strategy' => $overrideStrategy, 'override' => $override);
 }
 
 $bNewPairs = array_merge($bHighCoins,$bMedCoins,$bHelpCoins);
-//$bNewPairs = array_merge($bHighCoins,$bMedCoins);
-
-
+}
 //////////////////////End Bittrex Calculations////////////////////////////
-
-
 
 //////////////Config Updating/////////////////////
 
 $jsonString = file_get_contents($cpath);
-
 
 $data = json_decode($jsonString, true);
 
@@ -360,13 +357,14 @@ $data['pairs']['bittrex'] = array();
 //$pHighStrat = $data['strategies'][$pHighStrategy];
 //$pMedStrat = $data['strategies'][$pMedStrategy];
 
-
+if($pKey){
 $data['pairs']['poloniex'] = $pNewPairs;
+}
+if($bKey){
 $data['pairs']['bittrex'] = $bNewPairs;
+}
 
 $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
 file_put_contents($cpath, $newJsonString);
-
-
 
 ?>
