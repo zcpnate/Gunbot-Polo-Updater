@@ -18,7 +18,8 @@ Instructions:
 5) Set configuration based on comments.
 
 6) Schedule to run using cron or task scheduler. Recommended 90 minute intervals.
-<br/>
+
+For exemptions. Set the configuration for your manual coins in your config.js. Add those coin names to manualconfig section to leave your manual configurations.<br/>
 
 If you like my work, I don't drink sooo buy me a Starbucks?<br/>
 BTC: 1EbMRKN6eF8DJMA114E8Hx6JWyzX8YvN65 <br/>
