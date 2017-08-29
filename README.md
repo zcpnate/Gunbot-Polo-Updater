@@ -22,5 +22,5 @@ Instructions:
 For exemptions. Set the configuration for your manual coins in your config.js. Add those coin names to manualconfig section to leave your manual configurations.<br/>
 
 If you like my work, I don't drink sooo buy me a Starbucks?<br/>
-BTC: 1EbMRKN6eF8DJMA114E8Hx6JWyzX8YvN65 <br/>
-ETH: 0xB0cF532D96Ca3cf53484FA5c788A1627568Bb942
+<b>BTC:</b> 1EbMRKN6eF8DJMA114E8Hx6JWyzX8YvN65 <br/>
+<b>ETH:</b> 0xB0cF532D96Ca3cf53484FA5c788A1627568Bb942
