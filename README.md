@@ -7,6 +7,12 @@ This uses Poloniex and Bittrex PHP API to automatically update config.js to bot 
 
 Instructions:
 
+For PoloTA Version:
+Download and enable Trader PHP extension. 
+
+Windows binaries: http://windows.php.net/downloads/pecl/releases/trader/0.4.0/
+Linux: https://pecl.php.net/package/trader
+
 1) Install PHP (php7 recommended)
 
 2) Enable cUrl and openssl PHP Extensions in php.ini 
