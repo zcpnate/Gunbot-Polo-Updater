@@ -11,6 +11,7 @@ For PoloTA Version:
 Download and enable Trader PHP extension. 
 
 Windows binaries: http://windows.php.net/downloads/pecl/releases/trader/0.4.0/
+<br/>
 Linux: https://pecl.php.net/package/trader
 
 1) Install PHP (php7 recommended)
